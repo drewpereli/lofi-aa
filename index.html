@@ -5,6 +5,10 @@
       body {
         background-color: black;
       }
+
+      label {
+        color: white;
+      }
     </style>
   </head>
   <body>
@@ -262,7 +266,7 @@
 
       // 3. This function creates an <iframe> (and YouTube player)
       //    after the API code downloads.
-      let musicPlayer, speakerPlayer, currentVideoIdx;
+      var musicPlayer, speakerPlayer, currentVideoIdx;
       function onYouTubeIframeAPIReady() {
         let musicPlayer = new YT.Player('music', {
           height: '0',
@@ -285,6 +289,16 @@
             'onStateChange': onPlayerStateChange
           }
         });
+
+        document.getElementById('speaker-volume').addEventListener('input', e => {
+          let val = e.target.value;
+          speakerPlayer.setVolume(val);
+        });
+
+        document.getElementById('music-volume').addEventListener('input', e => {
+          let val = e.target.value;
+          musicPlayer.setVolume(val);
+        });
       }
 
       // 4. The API will call this function when the video player is ready.
@@ -293,7 +307,7 @@
         event.target.playVideo();
 
         if (playerId === 'music'){
-          event.target.setVolume(10);
+          event.target.setVolume(50);
         }
         else {
           event.target.setVolume(100);
@@ -317,8 +331,8 @@
           let videoId = getRandomVideoDifferentFromLast();
 
           speakerPlayer = new YT.Player('speaker', {
-            height: '100',
-            width: '100',
+            height: '0',
+            width: '0',
             videoId,
             events: {
               'onReady': onPlayerReady.bind(null, 'speaker'),
@@ -341,12 +355,24 @@
 
         return videoId;
       }
+
     </script>
 
     <div class="main">
       <div class="controls">
-
+        <div class="speaker-volume-container">
+          <label for="speaker-volume">Speaker Volume</label>
+          <input id="speaker-volume" type="range" value="100" min="0" max="100">
+        </div>
+        <div class="music-volume-container">
+          <label for="music-volume">Music Volume</label>
+          <input id="music-volume" type="range" value="50" min="0" max="100">
+        </div>
       </div>
     </div>
   </body>
+
+  <script>
+
+  </script>
 </html>
