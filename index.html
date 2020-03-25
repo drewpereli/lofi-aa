@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <style>
+      body {
+        background-color: black;
+      }
+    </style>
+  </head>
   <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="music"></div>
@@ -255,35 +262,91 @@
 
       // 3. This function creates an <iframe> (and YouTube player)
       //    after the API code downloads.
-      let musicPlayer, speakerPlayer;
+      let musicPlayer, speakerPlayer, currentVideoIdx;
       function onYouTubeIframeAPIReady() {
-        YT.Player('music', {
+        let musicPlayer = new YT.Player('music', {
           height: '0',
           width: '0',
           videoId: '5qap5aO4i9A',
           events: {
-            'onReady': onPlayerReady,
+            'onReady': onPlayerReady.bind(null, 'music'),
           }
         });
 
-        // let videoIdIndex = Math.floor(Math.random() * videoIds.length);
-        // let videoId = videoIds[videoIdIndex];
+        let videoId = getRandomVideoDifferentFromLast();
 
-        // new YT.Player('speaker', {
-        //   height: '0',
-        //   width: '0',
-        //   videoId,
-        //   events: {
-        //     'onReady': onPlayerReady,
-        //   }
-        // });
+        let speakerPlayer = new YT.Player('speaker', {
+          height: '0',
+          width: '0',
+          startSeconds: 100,
+          videoId: videoId,
+          events: {
+            'onReady': onPlayerReady.bind(null, 'speaker'),
+            'onStateChange': onPlayerStateChange
+          }
+        });
       }
 
       // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(event) {
+      function onPlayerReady(playerId, event) {
+
         event.target.playVideo();
+
+        if (playerId === 'music'){
+          event.target.setVolume(10);
+        }
+        else {
+          event.target.setVolume(100);
+        }
       }
 
+      function onPlayerStateChange(event){
+        if (event.data === 0){
+
+          let speakerEl = document.getElementById('speaker');
+
+          let parentEl = speakerEl.parentElement;
+
+          parentEl.removeChild(speakerEl);
+
+          let newEl = document.createElement('div');
+          newEl.setAttribute('id', 'speaker');
+
+          parentEl.appendChild(newEl);
+
+          let videoId = getRandomVideoDifferentFromLast();
+
+          speakerPlayer = new YT.Player('speaker', {
+            height: '100',
+            width: '100',
+            videoId,
+            events: {
+              'onReady': onPlayerReady.bind(null, 'speaker'),
+              'onStateChange': onPlayerStateChange
+            }
+          });
+        }
+      }
+
+      function getRandomVideoDifferentFromLast(){
+        let videoIdx;
+        do {
+          videoIdx = Math.floor(Math.random() * videoIds.length);
+        }
+        while (videoIdx === currentVideoIdx)
+
+        currentVideoIdx = videoIdx;
+
+        let videoId = videoIds[videoIdx];
+
+        return videoId;
+      }
     </script>
+
+    <div class="main">
+      <div class="controls">
+
+      </div>
+    </div>
   </body>
 </html>
