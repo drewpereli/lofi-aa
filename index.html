@@ -2,13 +2,39 @@
 <html>
   <head>
     <style>
+
       body {
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-size: 1.25rem;
+      }
+
+
+      .main {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        align-items: center;
+        font-family: monospace;
+        color: white;
         background-color: black;
       }
 
-      label {
-        color: white;
+      .controls > div {
+        padding: .5rem;
+        display: flex;
+        width: 100vw;
+        justify-content: center;
       }
+
+      .controls label {
+        margin-right: 1rem;
+        width: 9rem;
+        text-align: right
+      }
+
     </style>
   </head>
   <body>
@@ -372,7 +398,4 @@
     </div>
   </body>
 
-  <script>
-
-  </script>
 </html>
