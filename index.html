@@ -38,11 +38,15 @@
     </style>
   </head>
   <body>
-    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+
     <div id="music"></div>
     <div id="speaker"></div>
 
     <script>
+
+			window.onload = () => {
+				console.log('window loaded');
+			}
 
       let videoIds = [
         "dGYPa2PKwnI",
@@ -283,62 +287,66 @@
         "-nVwxB2W8EM",
       ];
 
-      // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
 
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var musicPlayer, speakerPlayer, currentVideoIdx;
+			let currentVideoIdx;
+
       function onYouTubeIframeAPIReady() {
+				console.log('youtube iframe api ready');
         let musicPlayer = new YT.Player('music', {
+					host: 'https://www.youtube.com',
           height: '0',
-          width: '0',
+					width: '0',
           videoId: '5qap5aO4i9A',
           events: {
-            'onReady': onPlayerReady.bind(null, 'music'),
+            'onReady': onMusicPlayerReady,
           }
         });
 
-        let videoId = getRandomVideoDifferentFromLast();
+				document.getElementById('music-volume').addEventListener('input', e => {
+          let val = e.target.value;
+          musicPlayer.setVolume(val);
+        });
+
+			}
+
+			function onMusicPlayerReady(event){
+				console.log('music player ready');
+        event.target.playVideo();
+				event.target.setVolume(50);
+
+
+
+				let videoId = getRandomVideoDifferentFromLast();
 
         let speakerPlayer = new YT.Player('speaker', {
+					host: 'https://www.youtube.com',
           height: '0',
           width: '0',
           startSeconds: 100,
           videoId: videoId,
           events: {
-            'onReady': onPlayerReady.bind(null, 'speaker'),
+            'onReady': onSpeakerPlayerReady,
             'onStateChange': onPlayerStateChange
           }
-        });
+				});
 
-        document.getElementById('speaker-volume').addEventListener('input', e => {
+				document.getElementById('speaker-volume').addEventListener('input', e => {
           let val = e.target.value;
           speakerPlayer.setVolume(val);
         });
+			}
 
-        document.getElementById('music-volume').addEventListener('input', e => {
-          let val = e.target.value;
-          musicPlayer.setVolume(val);
-        });
-      }
-
-      // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(playerId, event) {
-
+			function onSpeakerPlayerReady(event){
+				console.log('speaker player ready');
         event.target.playVideo();
+				event.target.setVolume(100);
+			}
 
-        if (playerId === 'music'){
-          event.target.setVolume(50);
-        }
-        else {
-          event.target.setVolume(100);
-        }
-      }
 
       function onPlayerStateChange(event){
         if (event.data === 0){
@@ -364,7 +372,7 @@
               'onReady': onPlayerReady.bind(null, 'speaker'),
               'onStateChange': onPlayerStateChange
             }
-          });
+					});
         }
       }
 
